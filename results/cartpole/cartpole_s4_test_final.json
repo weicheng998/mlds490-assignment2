@@ -1,0 +1,19 @@
+{
+ "run": "cartpole_s4",
+ "which": "final",
+ "n": 500,
+ "eps": 0.0,
+ "seed0": 1000000000,
+ "sticky": null,
+ "mean": 438.06,
+ "std": 81.71071951321156,
+ "median": 500.0,
+ "min": 170.0,
+ "max": 500.0,
+ "mean_len": 438.06,
+ "n_truncated": 277,
+ "frac_500": 0.556,
+ "n_failed": 223,
+ "failed_by_cart_position": 223,
+ "failed_by_pole_angle": 0
+}

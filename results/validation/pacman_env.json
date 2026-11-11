@@ -1,0 +1,33 @@
+{
+ "values": 9,
+ "pac_visible_frac": 1.0,
+ "rewards": {
+  "10.0": 454
+ },
+ "life_losses": [
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3,
+  3
+ ],
+ "mean_len": 492.2,
+ "random_mean": 227.0,
+ "pellet_share": 1.0,
+ "pass": true
+}

@@ -1,0 +1,6 @@
+torch
+gymnasium[atari]==1.0.0
+ale-py==0.10.1
+numpy
+scipy
+matplotlib

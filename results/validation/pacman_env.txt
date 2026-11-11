@@ -1,0 +1,12 @@
+== pacman_env: ALE/MsPacman-v5 properties measured on 20 random-policy episodes ==
+action space: 9 actions: ['NOOP', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UPRIGHT', 'UPLEFT', 'DOWNRIGHT', 'DOWNLEFT']
+env kwargs: frameskip=4, repeat_action_probability=0.25, full_action_space=False, max_num_frames_per_episode=108000
+preprocessed frame: shape (88, 80, 1), dtype int8, 9 distinct values in [-128, 27]
+value -128 (Pac-Man after the 'improve contrast' step) present in 9844/9844 frames (100.0%); no other pixel maps to -128 (asserted for every frame)
+episode length: mean 492 agent steps (min 311, max 657); random score mean 227
+life losses detected per episode: [3] (predicted exactly 3); the last one coincides with termination in 20/20 episodes
+non-zero rewards seen (value: count): {10.0: 454}; all are positive: True
+reward clipping: 454 clipped reward units carry a raw score of 4540; 100.0% of the raw score comes from 10-point pellets
+sticky p=0.25: same seed & actions -> identical episode: True; different seed -> different episode: True
+sticky p=0: different seeds, same actions -> identical episode: True (the env seed only drives sticky actions)
+PASS

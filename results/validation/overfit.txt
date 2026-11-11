@@ -1,0 +1,5 @@
+== overfit: one fixed batch of 64 CartPole transitions, target network frozen ==
+Prediction: with fixed regression targets the loss goes to ~0 (the network can memorise 64 points).
+MSE loss: step 0 = 1.0672, step 100 = 0.00018, step 1000 = 4.74e-06, step 2999 = 3.45e-07
+max |Q(s,a) - y| over the batch after training = 1.81e-03; number of terminal samples in batch = 4
+PASS

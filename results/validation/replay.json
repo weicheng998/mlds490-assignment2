@@ -1,0 +1,11 @@
+{
+ "sampleable": 1130,
+ "outside": 0,
+ "chi2": 1183.9056500000002,
+ "p": 0.12482130868711788,
+ "cross_episode_frames": 0,
+ "wrong_time": 0,
+ "actor_mismatch": 0,
+ "bad_cut": 0,
+ "pass": true
+}

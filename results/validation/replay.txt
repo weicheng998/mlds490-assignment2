@@ -1,0 +1,9 @@
+== replay: uniform sampling and frame-stack integrity (4 envs, stack 4, ring wraps many times) ==
+(a) 1130 sampleable transitions of 1200 slots; 400000 draws
+    draws that hit a non-sampleable slot: 0 (predicted 0)
+    chi-square vs uniform: chi2 = 1183.9, dof = 1129, p = 0.125 (predicted: not small)
+(b) frames from another episode inside a sampled state or next state: 0 of 800000 (predicted 0)
+    wrong time index in state / next state stacks: 0 / 0 (predicted 0 / 0)
+    sampled state != state the actor saw at that step (10,000 checked): 0 (predicted 0)
+(c) cut=1 on a truncated (odd) episode: 0 (predicted 0); next frame is always step t+1 of the same episode: True
+PASS
