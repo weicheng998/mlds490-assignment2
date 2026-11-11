@@ -1,0 +1,15 @@
+{
+ "run": "mspacman_s0",
+ "which": "best",
+ "n": 500,
+ "eps": 0.0,
+ "seed0": 1000000000,
+ "sticky": null,
+ "mean": 4803.48,
+ "std": 1398.1943299730326,
+ "median": 4790.0,
+ "min": 2090.0,
+ "max": 7480.0,
+ "mean_len": 1443.456,
+ "n_truncated": 0
+}

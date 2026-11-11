@@ -11,6 +11,18 @@ DQN with a neural network, a replay buffer and a target network on
 
 The report (`report/report.pdf`) contains all figures, edge cases, validation results and discussion.
 
+## Results (500 greedy test episodes on unseen seeds, mean ± std)
+
+| | Validation-selected network (`best.pt`) | Last network (`final.pt`) | Random policy |
+|---|---|---|---|
+| CartPole-v1, 5 seeds | 500.0 ± 0.0 for every seed | 188.2 – 499.5 depending on the seed | 22.4 ± 12.7 |
+| MsPacman-v5, Double DQN seed 0 (main run) | 4803 ± 1398 | 3881 ± 1399 | 256 ± 129 |
+| MsPacman-v5, Double DQN seed 1 | 3297 ± 935 | 2903 ± 1076 | |
+| MsPacman-v5, vanilla DQN seed 0 | 3820 ± 1002 | 3820 ± 1002 (same network) | |
+
+MsPacman runs: 15M agent steps (60M frames, about 15,000 episodes, 14.9 h on one RTX 2080 Ti). The score was still
+rising when training stopped. CartPole training is not stable at the end of the run; see the report.
+
 ## Setup
 
 ```bash

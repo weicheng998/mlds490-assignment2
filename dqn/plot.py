@@ -181,7 +181,7 @@ def fig_calibration(items, name, summary):
     items = [it for it in items if os.path.exists(f"{RES}/{it[1]}/{it[2]}_trace_{it[3]}.npz")]
     if not items:
         return
-    fig, axes = plt.subplots(1, len(items), figsize=(4.3 * len(items), 3.9), squeeze=False)
+    fig, axes = plt.subplots(1, len(items), figsize=(5.2 * len(items), 3.9), squeeze=False, layout="constrained")
     for ax, (title, env, run, which) in zip(axes[0], items):
         tr = np.load(f"{RES}/{env}/{run}_trace_{which}.npz")
         q, g = realized_returns(tr)
@@ -198,7 +198,7 @@ def fig_calibration(items, name, summary):
         ax.set_xlabel("realized discounted return $G_t$"); ax.set_ylabel(r"predicted $\max_a Q(s_t,a)$")
         ax.set_title(f"{title}\nbias Q−G = {s['bias']:+.2f}, MAE = {s['mae']:.2f}, n = {s['n']:,}", fontsize=9)
         ax.legend(fontsize=7, loc="upper left")
-        fig.colorbar(hb, ax=ax, label="states (log scale)", fraction=0.046)
+        fig.colorbar(hb, ax=ax, label="states (log scale)", fraction=0.046, pad=0.03)
     save(fig, name)
 
 

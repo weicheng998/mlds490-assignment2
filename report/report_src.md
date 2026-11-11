@@ -198,7 +198,89 @@ For $\gamma\le0.95$ the held-out value sits at 90–97% of the ceiling, and the 
 
 # MsPacman-v5 ($\gamma=0.99$)
 
-%%MSPACMAN%%
+## Results
+
+Three runs were trained in parallel, each on its own GPU: Double DQN with seeds 0 and 1, and the vanilla DQN target with seed 0. Plots are shown for Double DQN seed 0, which I fixed as the main run before training started. Training reward is the raw game score of $\varepsilon$-greedy episodes.
+
+![**MsPacman (i).** Maximum Q-value against training episode, main run. Blue dots: per-episode maximum of $\max_aQ(s,a)$ over visited states. Orange: mean $\max_aQ$ on 2,048 fixed held-out states from random play. Units are clipped rewards until the next lost life.](../results/figures/fig_mspacman_s0_maxq.png){width=78%}
+
+![**MsPacman (ii).** Raw game score of every training episode (blue) and the moving average of the last 100 episodes (orange), main run.](../results/figures/fig_mspacman_s0_reward.png){width=78%}
+
+![**MsPacman (iii).** Histogram of the raw score of 500 greedy test episodes on unseen seeds, main run, with the random policy on the same seeds in grey. Left: validation-selected checkpoint. Right: last network.](../results/figures/fig_mspacman_s0_hist.png){width=95%}
+
+| Run | Episodes · agent steps | Training score, first 100 episodes | Moving average at episode 4,000 / 6,000 | Last 100 episodes | Test, `best.pt` (500 ep.) | Test, `final.pt` (500 ep.) |
+|---|---|---|---|---|---|---|
+| Double DQN, seed 0 (main) | {{mspacman_s0|training|episodes:,}} · {{mspacman_s0|training|steps:,}} | {{mspacman_s0|training|first100_mean:.0f}} | {{mspacman_s0|training|ma100_at_4000:.0f}} / {{mspacman_s0|training|ma100_at_6000:.0f}} | {{mspacman_s0|training|last100_mean:.0f}} | **{{mspacman_s0|best|mean:.0f}} ± {{mspacman_s0|best|std:.0f}}** | {{mspacman_s0|final|mean:.0f}} ± {{mspacman_s0|final|std:.0f}} |
+| Double DQN, seed 1 | {{mspacman_s1|training|episodes:,}} · {{mspacman_s1|training|steps:,}} | {{mspacman_s1|training|first100_mean:.0f}} | {{mspacman_s1|training|ma100_at_4000:.0f}} / {{mspacman_s1|training|ma100_at_6000:.0f}} | {{mspacman_s1|training|last100_mean:.0f}} | {{mspacman_s1|best|mean:.0f}} ± {{mspacman_s1|best|std:.0f}} | {{mspacman_s1|final|mean:.0f}} ± {{mspacman_s1|final|std:.0f}} |
+| Vanilla DQN, seed 0 | {{mspacman_s0_dqn|training|episodes:,}} · {{mspacman_s0_dqn|training|steps:,}} | {{mspacman_s0_dqn|training|first100_mean:.0f}} | {{mspacman_s0_dqn|training|ma100_at_4000:.0f}} / {{mspacman_s0_dqn|training|ma100_at_6000:.0f}} | {{mspacman_s0_dqn|training|last100_mean:.0f}} | {{mspacman_s0_dqn|best|mean:.0f}} ± {{mspacman_s0_dqn|best|std:.0f}} | {{mspacman_s0_dqn|final|mean:.0f}} ± {{mspacman_s0_dqn|final|std:.0f}} |
+| Random policy | — | — | — | — | {{mspacman_s0|random|mean:.0f}} ± {{mspacman_s0|random|std:.0f}} | |
+
+Each run trained for 15 million agent steps (60 million emulator frames), which took about {{mspacman_s0|training|wall_hours:.1f}} hours on one RTX 2080 Ti and gave about 15,000 episodes. The assignment asks for improvement over roughly 4,000–6,000 episodes, so the table reports the moving average at those two points as well as at the end.
+
+**The agent improves steadily and does not converge.** In the main run the 100-episode moving average of the training score goes from {{mspacman_s0|training|first100_mean:.0f}} (first 100 episodes, almost random play) to {{mspacman_s0|training|ma100_at_4000:.0f}} at episode 4,000, {{mspacman_s0|training|ma100_at_6000:.0f}} at episode 6,000 and {{mspacman_s0|training|last100_mean:.0f}} over the last 100 episodes. The other two runs follow the same curve up to about episode 10,000 (Figure 11, left). The curve is still rising when training stops, so these numbers are a point on a learning curve and not a converged score.
+
+**Test performance.** On 500 unseen test seeds the validation-selected network of the main run scores **{{mspacman_s0|best|mean:.0f}} ± {{mspacman_s0|best|std:.0f}}** (mean ± standard deviation; median {{mspacman_s0|best|median:.0f}}, range {{mspacman_s0|best|min:.0f}}–{{mspacman_s0|best|max:.0f}}), against {{mspacman_s0|random|mean:.0f}} ± {{mspacman_s0|random|std:.0f}} for the random policy on the same seeds. The last network of the same run scores {{mspacman_s0|final|mean:.0f}} ± {{mspacman_s0|final|std:.0f}}.
+
+Three qualifications belong next to the headline number:
+
+* *Checkpoint selection is noisy.* `best.pt` was chosen by the mean of 30 validation episodes ({{mspacman_s0|training|val_best:.0f}} at step {{mspacman_s0|training|val_best_step:,}}). With a per-episode standard deviation near 1,400, a 30-episode mean has a standard error of about 250, and the maximum of 60 such means is biased upward. The test score of the selected network ({{mspacman_s0|best|mean:.0f}}) is indeed below its validation score. The test seeds were never used for selection, so the test number itself is unbiased for that network.
+* *The main run is the best of three.* Double DQN with seed 1 reaches {{mspacman_s1|best|mean:.0f}} ± {{mspacman_s1|best|std:.0f}} and the vanilla target {{mspacman_s0_dqn|best|mean:.0f}} ± {{mspacman_s0_dqn|best|std:.0f}}. I chose seed 0 as the main run before training, but a reader should take about 3,300–4,800 as the range this implementation produces, not 4,800.
+* *The policy changes from checkpoint to checkpoint.* The validation curve of the main run (Figure 11, middle) jumps between about 3,000 and 5,000 in the last 2 million steps, and `final.pt` is about 900 points below `best.pt`. This is the same kind of instability as in CartPole, at a smaller relative size.
+
+The test histogram (Figure 10) is not bell-shaped. The scores of `best.pt` form three groups, around 2,400 (42 episodes below 3,000), around 3,700 (205 episodes between 3,000 and 4,500) and around 6,100 (253 episodes above 4,500). I did not verify the cause. A likely one is that an episode's score depends mostly on how far the agent gets before a life is lost at a few recurring places, so the mean and the standard deviation alone describe this distribution poorly.
+
+![**All three MsPacman runs.** Left: moving average of the training score. Middle: mean score of 30 greedy validation episodes every 250,000 steps. Right: mean $\max_aQ$ on the fixed held-out states.](../results/figures/fig_mspacman_runs.png){width=100%}
+
+## Discussion
+
+**Maximum Q.** Q-values here are in clipped-reward units: the expected discounted number of rewarded steps until the next lost life. Since at most one clipped reward arrives per step, $1/(1-\gamma)=100$ is a hard upper bound. The per-episode maximum of the main run rises to about 30 by episode 6,000 and then stays there (peak {{mspacman_s0|training|max_q_peak:.1f}}); the mean over the fixed held-out states levels off near {{mspacman_s0|training|heldout_q_final:.0f}}. Both are far below 100 and neither diverges. A value of 30 with $\gamma=0.99$ is also plausible in size: it corresponds to collecting a reward on roughly one step in three for a long stretch, and the trained agent collects a reward on about one step in six over a whole episode (238 rewarded steps in 1,440).
+
+The Q plateau and the score do not move together. Between episode 6,000 and the end, maximum Q is flat while the training score rises from about 2,100 to about 3,800. I see two reasons. First, Q counts rewarded steps before the next lost life, discounted with a horizon of about 100 steps, while the score adds up three lives and the full length of the game. Surviving longer raises the score a lot and the discounted count very little. Second, clipping hides the size of each reward. So in this setup maximum Q is a useful check that learning is healthy (bounded, smooth, no blow-up), but it is not a proxy for the score.
+
+**Double DQN against the vanilla target.** The vanilla run has higher Q-values on the same held-out states for most of training (peak {{mspacman_s0_dqn|training|heldout_q_max:.1f}} against {{mspacman_s0|training|heldout_q_max:.1f}}; Figure 11, right), and its per-episode maximum once spiked to {{mspacman_s0_dqn|training|max_q_peak:.0f}}, close to the bound, before returning to about 33. That is the direction the theory predicts, and the calibration plot below agrees. On score I cannot separate the two: the vanilla run lies between the two Double DQN seeds. One seed of one and two seeds of the other do not support a claim either way.
+
+**Consequence of reward clipping.** With clipped rewards the agent is trained to maximize the number of rewarded steps, not the score, so a 200-point ghost counts the same as a 10-point pellet. In the random-policy episodes of P1 every point comes from pellets (10 points per rewarded step). In 100 test episodes of the trained main run the average is 20.6 points per rewarded step, so it does collect larger rewards (power pellets, ghosts, fruit), but nothing in its objective tells it to prefer them. The number of rewarded steps and the raw score remain strongly correlated across episodes (0.94), which is why training on clipped rewards still raises the score.
+
+**Compared with CartPole.** CartPole has a known optimum and the agent reaches it; the open problem there is keeping it. MsPacman has no such ceiling within this budget. The score after 60 million frames is roughly 13–19 times the random score and still far from what the game allows, and the main error source is different: in CartPole a nearly constant value function made the actions hard to tell apart, here the value function is informative but coarse (next section).
+
+## Edge cases and how each was handled
+
+| Edge case | Handling | Verified by |
+|---|---|---|
+| Losing a life is not the end of the episode | bootstrap is cut (`cut = 1`) but the episode, the frame stack and the score continue; the environment is reset only at game over | P1: exactly 3 life losses detected in each of 20 episodes, the last one together with termination |
+| Time limit of 108,000 emulator frames | truncation: `cut = 0`, true next frame stored | same code path as V4; the main run logged {{mspacman_s0|training|n_truncated}} truncated training episodes; {{mspacman_s0|best|n_truncated}} of the 500 test episodes were truncated |
+| First frames of an episode (fewer than 4 frames exist) | the first frame is repeated; no frame of the previous episode is ever stacked | V2(b): 0 cross-episode frames in 800,000 |
+| The handout preprocessing sets Pac-Man's colour to 0, which could erase her | measured: after normalisation Pac-Man is the only object with value −128, so she stays visible | P1: −128 present in {{validation|pacman_env|pac_visible_frac:.1%}} of 9,844 frames, and never for another object |
+| `preprocess_observation` returns `int8` | stored as `int8` (7 kB per frame); converted to float and divided by 128 inside the network | P1: shape, dtype and value range asserted for every frame |
+| Reward magnitudes from 10 to several hundred | training reward is $\operatorname{sign}(r)$; scores are reported raw | P1: all rewards positive, so clipping maps them to $\{0,1\}$. Consequence discussed above |
+| Sticky actions make the environment stochastic | kept (v5 default); evaluation uses 500 seeds | P2: with sticky actions off, all 30 evaluation episodes are identical |
+| A greedy agent could stand still forever | not prevented; an episode would end by the 108,000-frame truncation | {{mspacman_s0|best|n_truncated}} truncated test episodes |
+| Replay memory: 500,000 states of 4 frames | single frames stored once (3.5 GB instead of 14 GB); stacks rebuilt at sampling | V2 |
+| A 14-hour job on a shared machine | atomic checkpoint of network, optimizer, counters, RNG state and buffer every 30 minutes; logs appended continuously | V6 |
+| Eight environments finish episodes at different times | episodes are logged in order of completion; each has its own seed, and evaluation seeds are assigned to workers before the rollout starts | all 500 test seeds are played exactly once (the result arrays have 500 entries) |
+| Non-finite loss | training stops and keeps the last good checkpoint | did not occur |
+
+## Validation experiments specific to MsPacman
+
+**P1 — Environment facts the code relies on** (`python -m dqn.validate --allow-cpu --tests pacman_env`). Measured on 20 random-policy episodes (9,844 frames): the environment has 9 actions, frame skip 4, sticky-action probability 0.25 and a 108,000-frame limit. The preprocessed frame has 9 distinct grey levels. Each episode has exactly 3 life losses. A random episode lasts {{validation|pacman_env|mean_len:.0f}} agent steps and scores {{validation|pacman_env|random_mean:.0f}} on average, entirely from 10-point pellets ({{validation|pacman_env|pellet_share:.0%}} of the score). With the same seed and the same actions the episode is reproduced exactly; with sticky actions off, different seeds give the same episode, so the seed only drives the sticky actions.
+
+**P2 — Reducing the stochasticity** (`python -m dqn.validate --tests sticky --run mspacman_s0`). *Prediction:* with sticky actions off, the emulator and the greedy policy are both deterministic, so all episodes must have the same score. *Result:* with $p=0.25$ the 30 episodes have {{validation|sticky_mspacman_s0|0.25|distinct}} distinct scores (mean {{validation|sticky_mspacman_s0|0.25|mean:.0f}}, std {{validation|sticky_mspacman_s0|0.25|std:.0f}}); with $p=0$ they have {{validation|sticky_mspacman_s0|0.0|distinct}} distinct score ({{validation|sticky_mspacman_s0|0.0|mean:.0f}}, std {{validation|sticky_mspacman_s0|0.0|std:.0f}}). The spread of the histogram in Figure 10 is therefore produced by sticky actions alone, and a single deterministic rollout would say very little about the agent.
+
+**P3 — Trained agent against the random policy.** On the same 500 test seeds the main run's `best.pt` scores {{mspacman_s0|best|mean:.0f}} and the random policy {{mspacman_s0|random|mean:.0f}}: a difference of {{mspacman_s0|best_vs_random|diff:.0f}} points, 95% interval [{{mspacman_s0|best_vs_random|ci95|0:.0f}}, {{mspacman_s0|best_vs_random|ci95|1:.0f}}], Welch $t={{mspacman_s0|best_vs_random|welch_t:.1f}}$. A trained episode beats a random one with probability {{mspacman_s0|best_vs_random|prob_superiority:.3f}} (Mann–Whitney). Within training, the last 100 episodes average {{mspacman_s0|training|last100_mean:.0f}} against {{mspacman_s0|training|first100_mean:.0f}} for the first 100.
+
+**P4 — Is Q calibrated? (non-standard plot 2).** For 100 greedy test episodes I recorded $\max_aQ(s_t,a)$ at every step and afterwards computed the discounted clipped reward the agent actually collected from that step until its next lost life. This is exactly the quantity the network is trained to predict, so on average the two should agree; a prediction above the realized return is overestimation (or an optimistic belief about a policy better than the greedy one).
+
+![**Non-standard plot 2: predicted Q against realized return** on 100 greedy test episodes. Each hexagon counts states; the dashed line is perfect calibration; orange dots are the mean prediction in 12 equal-count bins of realized return. Left: Double DQN. Right: vanilla DQN target.](../results/figures/fig_calibration_mspacman.png){width=100%}
+
+*Result.* For Double DQN the mean prediction is {{calibration_mspacman_s0_best|mean_Q:.1f}} and the mean realized return {{calibration_mspacman_s0_best|mean_G:.1f}}: a bias of {{calibration_mspacman_s0_best|bias:+.2f}}, with a mean absolute error of {{calibration_mspacman_s0_best|mae:.1f}} and a correlation of {{calibration_mspacman_s0_best|corr:.2f}} over {{calibration_mspacman_s0_best|n:,}} states. For the vanilla target the bias is {{calibration_mspacman_s0_dqn_best|bias:+.2f}}, the mean absolute error {{calibration_mspacman_s0_dqn_best|mae:.1f}} and the correlation {{calibration_mspacman_s0_dqn_best|corr:.2f}}. So the Double DQN network is close to unbiased on average and the vanilla network overestimates, which is the expected sign. The difference is small against the spread, and it comes from one run of each.
+
+The average hides two systematic errors that the plot shows for both networks. Near a realized return of zero, predictions range up to 25: these are states shortly before a lost life that the network did not see coming. And there is a horizontal band of states with a predicted value of 2–4 whose realized return was anywhere up to 28: the network was pessimistic, and the agent then survived and kept scoring. I did not identify which states form this band. Because both errors exist, "{{calibration_mspacman_s0_best|frac_over:.0%}} of states are overestimated" and "the mean bias is slightly negative" are both true for the Double DQN network, and neither number alone describes it.
+
+![**Q aligned to the next lost life** (main run, `best.pt`, 100 test episodes). $k$ counts agent steps before the life is lost; the band is the interquartile range of the prediction.](../results/figures/fig_aligned_best.png){width=60%}
+
+Figure 13 repeats the failure-aligned view of Figure 5 for the {{aligned_mspacman_s0_best|events}} lost lives in these episodes. The mean prediction over all states is {{aligned_mspacman_s0_best|mean_q_all_states:.1f}}. Sixty steps before a life is lost it is already down to {{aligned_mspacman_s0_best|q_at_k|59:.1f}}, at 20 steps it is {{aligned_mspacman_s0_best|q_at_k|20:.1f}}, at 10 steps {{aligned_mspacman_s0_best|q_at_k|10:.1f}} and at the last step {{aligned_mspacman_s0_best|q_at_k|0:.1f}}. The realized return is zero over the last 18 steps or so, meaning the agent collects nothing in the final moments before it is caught. So the network does register danger, well in advance and more clearly than the final CartPole networks did (they predicted 17–19 one step before failing). It still does not go to zero: at the last step it predicts about 1.3 rewarded steps where there are none, and over the last 10 steps the mean gap is {{aligned_mspacman_s0_best|mean_abs_gap_first10:.1f}}. The gap of about 3 at 40–60 steps is partly the selection built into this plot (it only contains stretches that ended in a lost life) and should not be read as overestimation alone.
+
+**The algorithm-level tests** (hand trace, replay integrity, overfit, exact $Q^*$, controls, resume) are in Section 4. They run the same agent and buffer classes that trained MsPacman, including the 4-frame stacking path in V2.
 
 # Validation of the algorithm itself
 
@@ -288,3 +370,35 @@ The largest deviation from the prediction is {{validation|controls|rows|2|max_ab
 
 *A prediction that was wrong.* I predicted exactly 5,000 gradient updates (6,000 steps minus a 1,000-step warm-up). The run made {{validation|resume|updates}}. The warm-up is counted in buffer *slots*, and every finished episode uses one extra slot for its final frame, so learning starts at step 960. The test now derives the expected count from the episode log and it matches. Nothing was broken, but the hyperparameter table above says "buffer slots" for this reason.
 
+
+# Given three more months
+
+**More evidence for the same claims.**
+
+* *Seeds.* Two MsPacman seeds cannot support a claim about Double DQN against the vanilla target. I would run 5–10 seeds per variant and report interval estimates with a stratified bootstrap, as I did for CartPole.
+* *Exact $Q^*$ at larger scale.* The tabular test has 21 states. I would add small image-based grid worlds whose $Q^*$ is computed by value iteration, so that the convolutional network and the frame-stacking path are also tested against a known answer, not only the MLP.
+* *Calibration against the right target.* The calibration plot compares $Q$ with the return of the greedy policy, which mixes overestimation with policy suboptimality. I would also train a separate Monte Carlo value regressor on the same states to estimate $V^\pi$ and separate the two.
+
+**Open questions from this assignment.**
+
+* *Why the CartPole value function loses the track edge.* I would test three explanations separately: too few terminal transitions at the edge (oversample them, or use prioritized replay), the Huber loss down-weighting large errors (V4 showed it changes the fixed point, although MSE alone did not help in the ablation), and the decaying learning rate freezing a bad state. I would also log the action gap $|Q(s,0)-Q(s,1)|$ along trajectories to test the "small gap" argument directly.
+* *Life loss as a bootstrap cut, and reward clipping.* Both are modeling choices that I adopted without an ablation. I would compare them with no cut, and with unclipped rewards rescaled by a learned or fixed constant, on raw score and on how often the agent eats ghosts.
+* *Sticky actions and flicker.* With frame skip 4 the agent sees every fourth frame. I would measure how often ghosts are invisible in the observed frames and compare with max-pooling two consecutive frames.
+
+**Further experiments.**
+
+* Hyperparameter sensitivity (target-sync period, replay size, update ratio, learning rate) with a fixed budget, to find out which of my choices matter.
+* Known improvements one at a time: dueling networks, prioritized replay, $n$-step returns, distributional targets, and noisy networks instead of $\varepsilon$-greedy.
+* Longer training (I used 60M emulator frames; published DQN results usually use 200M) with the validation curve as the stopping rule.
+* Input saliency and a recorded game with per-action Q-values, to check whether the agent reacts to ghosts or only to pellets.
+* A regression suite: the tests in Section 4 run on every commit, with stored reference numbers, so that a later change that breaks the truncation handling or the buffer is caught automatically.
+
+# Limitations
+
+* **CartPole is solved by a selected checkpoint, not by the end of training.** `best.pt` scores 500.0 on all 500 test episodes for all five seeds, but the last networks range from {{cartpole_s0|final|mean:.1f}} to {{cartpole_s1|final|mean:.1f}}. I did not find a setting that removes the instability, and I have a description of the failure (the value function loses the track edge) but not a confirmed cause.
+* **MsPacman has not converged.** The score was still rising at 15 million steps. The reported {{mspacman_s0|best|mean:.0f}} is the better of two Double DQN seeds, selected on a noisy 30-episode validation mean; the other seed reaches {{mspacman_s1|best|mean:.0f}}.
+* **Few seeds on MsPacman.** Three runs in total. Nothing here supports a claim about Double DQN against the vanilla target on score.
+* **Untested design choices.** Reward clipping, life loss as a bootstrap cut, the $\varepsilon$ and learning-rate schedules and the buffer size on MsPacman were set once from the literature and not ablated. The ablations and the $\gamma$ sweep were run on CartPole only.
+* **The exact-answer tests use small problems.** The tabular $Q^*$ test and the reward controls exercise the MLP path. The convolutional network and frame stacking are covered by the replay test, the environment test and the calibration plots, which are weaker evidence than an exact answer.
+* **Calibration compares Q with the return of the greedy policy**, so it mixes estimation error with the gap between the greedy policy and the policy the network implicitly evaluates. The unexplained low-prediction band in Figure 12 is an open item.
+* **Evaluation conditions.** All MsPacman numbers use the v5 defaults (frame skip 4, sticky actions 0.25, full action set of 9, three lives, greedy policy). Scores under other protocols, for example with no sticky actions, are not comparable: P2 shows a single deterministic rollout scoring {{validation|sticky_mspacman_s0|0.0|mean:.0f}}.

@@ -1,0 +1,6 @@
+== sticky: mspacman_s0 (best.pt), greedy, 30 evaluation seeds, sticky-action probability 0.25 vs 0 ==
+Prediction: with p=0 the emulator and the greedy policy are both deterministic, so every episode has the
+            same score (std = 0). All spread in the 500-episode histogram therefore comes from sticky actions.
+  p=0.25: mean 4898.0, std 1240.1, distinct scores 26/30, mean length 1436, truncated 0
+  p=0.0: mean 6040.0, std 0.0, distinct scores 1/30, mean length 1573, truncated 0
+PASS

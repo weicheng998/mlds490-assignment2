@@ -1,0 +1,15 @@
+{
+ "0.25": {
+  "mean": 4898.0,
+  "std": 1240.0845354944208,
+  "distinct": 26,
+  "truncated": 0
+ },
+ "0.0": {
+  "mean": 6040.0,
+  "std": 0.0,
+  "distinct": 1,
+  "truncated": 0
+ },
+ "pass": true
+}
