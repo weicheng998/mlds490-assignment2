@@ -101,7 +101,7 @@ with the Huber loss between $Q_\theta(s,a)$ and $y$. $Q_{\bar\theta}$ is the **t
 * *Replay storage.* The buffer stores single frames (int8) and rebuilds 4-frame stacks when sampling, which is 4× smaller than storing stacked states. The last observation of every episode gets its own non-sampleable slot, so the next state of any transition is simply "the stack ending one slot later", also at a truncation.
 * *Life loss as a bootstrap cut in MsPacman.* The game continues after a lost life, so this is a modeling choice rather than a fact about the environment. My reasoning was that it tells the agent directly that dying is bad (otherwise the only penalty is the missing future reward several hundred steps later). The price is that Q is a "value until the next death", which is what the calibration plot in Section 3 compares against.
 * *Reward clipping.* As I understand it, clipping keeps the TD errors in the range where the Huber loss is well behaved and lets the CartPole learning-rate scale carry over. It also makes the agent indifferent between a 10-point pellet and a 200-point ghost; the consequence is discussed in Section 3.
-* *Sticky actions and frame skip.* I kept the `v5` defaults (frame skip 4, sticky-action probability 0.25, 9 actions) because the assignment names this version. Sticky actions make the environment stochastic, which matters for the evaluation (Section 3.3).
+* *Sticky actions and frame skip.* I kept the `v5` defaults (frame skip 4, sticky-action probability 0.25, 9 actions) because the assignment names this version. Sticky actions make the environment stochastic, which matters for the evaluation (Sections 3.3 and 3.4).
 * *Vectorized acting.* Eight environments step in lock-step and each gradient step uses fresh uniform samples, with the standard ratio of one update per four agent steps.
 * *Evaluation is greedy* ($\varepsilon=0$): "roll out using your trained neural network".
 
@@ -127,7 +127,7 @@ All five seeds use the configuration in Section 1. Plots are shown for seed 0; t
 
 **The environment is solved, with a qualification.** For every seed, the checkpoint selected on 100 validation episodes keeps the pole up for the full 500 steps in all 500 test episodes (mean 500.0, standard deviation 0.0). Against the random policy on the same 500 seeds ({{cartpole_s0|random|mean:.1f}} ± {{cartpole_s0|random|std:.1f}}), the difference is {{cartpole_s0|best_vs_random|diff:.1f}} steps with a 95% interval of [{{cartpole_s0|best_vs_random|ci95|0:.1f}}, {{cartpole_s0|best_vs_random|ci95|1:.1f}}] (Welch $t={{cartpole_s0|best_vs_random|welch_t:.0f}}$; Mann–Whitney $p<10^{-100}$; every trained episode beats every random one).
 
-The qualification is that **training is not stable**, and I do not want the 500.0 to hide that. The last network of the same runs scores between {{cartpole_s0|final|mean:.0f}} and {{cartpole_s1|final|mean:.0f}} depending on the seed. In seed 0 only {{cartpole_s0|training|frac_evals_500:.0%}} of the 40 periodic validations reached a mean of 500, the 100-episode moving average of the training reward peaks at {{cartpole_s0|training|best_ma100:.0f}}, and it never reaches 475. The agent repeatedly finds a policy that balances for 500 steps and then loses it again (Figure 4, middle). The selection uses only validation seeds, so I believe the 500.0 is a fair estimate for *that checkpoint*; it is not an estimate of what a randomly chosen moment of training would give.
+The qualification is that **training is not stable**, and I do not want the 500.0 to hide that. The last network of the same runs scores between {{cartpole_s0|final|mean:.1f}} and {{cartpole_s1|final|mean:.1f}} depending on the seed. In seed 0 only {{cartpole_s0|training|frac_evals_500:.0%}} of the 40 periodic validations reached a mean of 500, the 100-episode moving average of the training reward peaks at {{cartpole_s0|training|best_ma100:.0f}}, and it never reaches 475. The agent repeatedly finds a policy that balances for 500 steps and then loses it again (Figure 4, middle). The selection uses only validation seeds, so I believe the 500.0 is a fair estimate for *that checkpoint*; it is not an estimate of what a randomly chosen moment of training would give.
 
 ![**All five CartPole seeds** against environment steps. Left: 100-episode moving average of the training reward. Middle: mean reward of 100 greedy validation episodes every 5,000 steps; each seed reaches 500 several times and falls back. Right: mean $\max_aQ$ on the held-out states settles at about 18 for every seed.](../results/figures/fig_cartpole_seeds.png){width=100%}
 
@@ -360,7 +360,7 @@ I take two things from this. First, the truncation bug is not cosmetic: it chang
 | 1 | 0.95 | 20 | {{validation|controls|rows|2|min_Q:.4f}} / {{validation|controls|rows|2|mean_Q:.4f}} / {{validation|controls|rows|2|max_Q:.4f}} |
 | 0 | 0.95 | 0 | {{validation|controls|rows|3|min_Q:.4f}} / {{validation|controls|rows|3|mean_Q:.4f}} / {{validation|controls|rows|3|max_Q:.4f}} |
 
-The largest deviation from the prediction is {{validation|controls|rows|2|max_abs_dev:.4f}} (at $\gamma=0.95$, 0.04% of the value).
+The largest deviation from the prediction is {{validation|controls|rows|2|max_abs_dev:.4f}} (at $\gamma=0.95$, about 0.01% of the value).
 
 ## V6 — Stop and restart (`resume`)
 

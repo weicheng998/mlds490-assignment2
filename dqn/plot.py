@@ -424,10 +424,11 @@ def main():
                      ("CartPole-v1, final.pt", "cartpole", a.cartpole_run, "final")], "fig_calibration_cartpole.png", summary)
     fig_calibration([("MsPacman, Double DQN (best.pt)", "mspacman", "mspacman_s0", "best"),
                      ("MsPacman, vanilla DQN (best.pt)", "mspacman", "mspacman_s0_dqn", "best")], "fig_calibration_mspacman.png", summary)
-    for w in ("final", "best"):       # use whichever CartPole checkpoint has failures to align to
-        fig_aligned([("CartPole-v1 (" + w + ".pt)", "cartpole", a.cartpole_run, w, 60, "pole falls / cart leaves the track"),
-                     ("MsPacman, Double DQN", "mspacman", "mspacman_s0", "best", 60, "life is lost")],
-                    f"fig_aligned_{w}.png", summary)
+    # CartPole: final.pt is the checkpoint that has failures to align to (best.pt never fails). MsPacman: best.pt.
+    fig_aligned([("CartPole-v1 (final.pt)", "cartpole", a.cartpole_run, "final", 60, "pole falls / cart leaves the track")],
+                "fig_aligned_final.png", summary)
+    fig_aligned([("MsPacman, Double DQN (best.pt)", "mspacman", "mspacman_s0", "best", 60, "life is lost")],
+                "fig_aligned_best.png", summary)
     for r in cp_runs:                 # per-seed: what does final.pt predict right before it fails?
         f = f"{RES}/cartpole/{r}_trace_final.npz"
         if os.path.exists(f):

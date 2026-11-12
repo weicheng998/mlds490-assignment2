@@ -1,7 +1,7 @@
 == resume: 6,000 CartPole steps in one go vs 3,000 + restart + 3,000 ==
-checkpoint at step 3000 / episode 117; after restart training ended at step 6000
-episode log: 176 rows, duplicates = 0, contiguous ids = True, steps non-decreasing = True
+checkpoint at step 3000 / episode 127; after restart training ended at step 6000
+episode log: 174 rows, duplicates = 0, contiguous ids = True, steps non-decreasing = True
 held-out log: steps strictly increasing = True
 gradient updates = 5041; predicted 5041 = one per step from step 960, the first step at which the buffer holds 1,000 slots (my first prediction, 5,000, ignored the extra final-frame slot per episode)
-replay buffer after restart holds 6176 slots; non-sampleable slots (episode ends + restart gap) = 177
+replay buffer after restart holds 6174 slots; non-sampleable slots (episode ends + restart gap) = 175
 PASS

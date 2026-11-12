@@ -326,7 +326,8 @@ def test_resume(dev):
     rows = list(csv.DictReader(open(os.path.join(tmp, "res", "resume.csv"))))
     eps = [int(x["episode"]) for x in rows]; steps = [int(x["step"]) for x in rows]
     held = [int(x["step"]) for x in csv.DictReader(open(os.path.join(tmp, "res", "resume_heldout.csv")))]
-    buf = ReplayBuffer(1, 50_000, (4,), np.float32, 1); buf.load(os.path.join(tmp, "ck", "resume", "buffer.npz"))
+    from dqn.train import DEFAULTS   # the buffer must be rebuilt with the capacity the run used
+    buf = ReplayBuffer(1, DEFAULTS["cartpole"]["buffer"], (4,), np.float32, 1); buf.load(os.path.join(tmp, "ck", "resume", "buffer.npz"))
     dup = len(eps) - len(set(eps)); contiguous = eps == list(range(len(eps)))
     say(f"checkpoint at step {ck['step']} / episode {ck['episode']}; after restart training ended at step {r['step']}")
     say(f"episode log: {len(eps)} rows, duplicates = {dup}, contiguous ids = {contiguous}, steps non-decreasing = {steps == sorted(steps)}")

@@ -8,16 +8,16 @@ Prediction 3 (added after prediction 2 failed with the Huber loss, see report): 
               is a conditional MEAN, so it should hold for the MSE loss. With Huber (delta = 1) the 5% of
               targets without bootstrap are > 1 away from the rest and are down-weighted like outliers,
               so the Huber agent should land between Q*(gamma_eff) and Q*.
-  trunc_as_terminal=0 loss=huber seed=0: mean Q =  -362.51 | MAE vs Q* =   1.51 (0.4%), max err =   4.20 | MAE vs Q*(gamma_eff) = 153.77 (73.7%) | greedy = pi* in 100% of states
-  trunc_as_terminal=0 loss=huber seed=1: mean Q =  -362.85 | MAE vs Q* =   1.09 (0.3%), max err =   4.67 | MAE vs Q*(gamma_eff) = 154.11 (73.8%) | greedy = pi* in 100% of states
-  trunc_as_terminal=0 loss=huber seed=2: mean Q =  -361.89 | MAE vs Q* =   1.54 (0.4%), max err =   4.78 | MAE vs Q*(gamma_eff) = 153.15 (73.4%) | greedy = pi* in 100% of states
-  trunc_as_terminal=1 loss=mse   seed=0: mean Q =  -217.47 | MAE vs Q* = 145.95 (40.2%), max err = 160.63 | MAE vs Q*(gamma_eff) =  16.48 (7.9%) | greedy = pi* in 100% of states
-  trunc_as_terminal=1 loss=mse   seed=1: mean Q =  -218.22 | MAE vs Q* = 145.20 (40.0%), max err = 162.11 | MAE vs Q*(gamma_eff) =  17.69 (8.5%) | greedy = pi* in 100% of states
-  trunc_as_terminal=1 loss=mse   seed=2: mean Q =  -219.12 | MAE vs Q* = 144.30 (39.7%), max err = 158.79 | MAE vs Q*(gamma_eff) =  16.49 (7.9%) | greedy = pi* in 100% of states
-  trunc_as_terminal=1 loss=huber seed=0: mean Q =  -311.29 | MAE vs Q* =  52.13 (14.3%), max err =  59.04 | MAE vs Q*(gamma_eff) = 102.55 (49.1%) | greedy = pi* in 100% of states
-  trunc_as_terminal=1 loss=huber seed=1: mean Q =  -308.42 | MAE vs Q* =  55.01 (15.1%), max err =  64.31 | MAE vs Q*(gamma_eff) =  99.68 (47.8%) | greedy = pi* in 100% of states
-  trunc_as_terminal=1 loss=huber seed=2: mean Q =  -310.65 | MAE vs Q* =  52.78 (14.5%), max err =  59.46 | MAE vs Q*(gamma_eff) = 101.91 (48.8%) | greedy = pi* in 100% of states
-Correct handling (Huber): mean Q -362.4, relative error vs Q* 0.4%.
-Bug + MSE:   mean Q -218.3; relative error vs predicted Q*(gamma_eff) 8.1%, vs Q* 39.9%.
-Bug + Huber: mean Q -310.1; lies between Q*(gamma_eff) = -208.7 and Q* = -363.4.
+  trunc_as_terminal=0 loss=huber seed=0: mean Q =  -362.28 | MAE vs Q* =   1.38 (0.4%), max err =   3.41 | MAE vs Q*(gamma_eff) = 153.54 (73.6%) | greedy = pi* in 100% of states
+  trunc_as_terminal=0 loss=huber seed=1: mean Q =  -362.03 | MAE vs Q* =   1.55 (0.4%), max err =   6.16 | MAE vs Q*(gamma_eff) = 153.29 (73.4%) | greedy = pi* in 100% of states
+  trunc_as_terminal=0 loss=huber seed=2: mean Q =  -363.85 | MAE vs Q* =   0.82 (0.2%), max err =   3.09 | MAE vs Q*(gamma_eff) = 155.12 (74.3%) | greedy = pi* in 100% of states
+  trunc_as_terminal=1 loss=mse   seed=0: mean Q =  -216.50 | MAE vs Q* = 146.92 (40.4%), max err = 159.97 | MAE vs Q*(gamma_eff) =  15.17 (7.3%) | greedy = pi* in 100% of states
+  trunc_as_terminal=1 loss=mse   seed=1: mean Q =  -216.76 | MAE vs Q* = 146.67 (40.4%), max err = 161.26 | MAE vs Q*(gamma_eff) =  15.97 (7.7%) | greedy = pi* in 100% of states
+  trunc_as_terminal=1 loss=mse   seed=2: mean Q =  -216.95 | MAE vs Q* = 146.48 (40.3%), max err = 160.03 | MAE vs Q*(gamma_eff) =  14.93 (7.2%) | greedy = pi* in 100% of states
+  trunc_as_terminal=1 loss=huber seed=0: mean Q =  -306.58 | MAE vs Q* =  56.84 (15.6%), max err =  63.07 | MAE vs Q*(gamma_eff) =  97.84 (46.9%) | greedy = pi* in 100% of states
+  trunc_as_terminal=1 loss=huber seed=1: mean Q =  -306.56 | MAE vs Q* =  56.87 (15.6%), max err =  66.10 | MAE vs Q*(gamma_eff) =  97.82 (46.9%) | greedy = pi* in 100% of states
+  trunc_as_terminal=1 loss=huber seed=2: mean Q =  -309.37 | MAE vs Q* =  54.05 (14.9%), max err =  60.52 | MAE vs Q*(gamma_eff) = 100.64 (48.2%) | greedy = pi* in 100% of states
+Correct handling (Huber): mean Q -362.7, relative error vs Q* 0.3%.
+Bug + MSE:   mean Q -216.7; relative error vs predicted Q*(gamma_eff) 7.4%, vs Q* 40.4%.
+Bug + Huber: mean Q -307.5; lies between Q*(gamma_eff) = -208.7 and Q* = -363.4.
 PASS

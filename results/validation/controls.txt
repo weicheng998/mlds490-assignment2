@@ -1,7 +1,7 @@
 == controls: reward == 1 at every step, no termination (truncation every 20 steps) ==
 Prediction: Q(s,a) = 1/(1-gamma) for every state and action; with reward == 0, Q = 0.
   reward=const gamma=0.5: predicted  2.000 | learned Q over all 42 (s,a): mean 2.0000, min 2.0000, max 2.0000, max |dev| = 0.0000
-  reward=const gamma=0.9: predicted 10.000 | learned Q over all 42 (s,a): mean 10.0013, min 10.0011, max 10.0016, max |dev| = 0.0016
-  reward=const gamma=0.95: predicted 20.000 | learned Q over all 42 (s,a): mean 20.0038, min 19.9992, max 20.0078, max |dev| = 0.0078
-  reward=zero  gamma=0.95: predicted  0.000 | learned Q over all 42 (s,a): mean -0.0001, min -0.0001, max -0.0001, max |dev| = 0.0001
+  reward=const gamma=0.9: predicted 10.000 | learned Q over all 42 (s,a): mean 9.9999, min 9.9999, max 9.9999, max |dev| = 0.0001
+  reward=const gamma=0.95: predicted 20.000 | learned Q over all 42 (s,a): mean 20.0018, min 20.0017, max 20.0018, max |dev| = 0.0018
+  reward=zero  gamma=0.95: predicted  0.000 | learned Q over all 42 (s,a): mean -0.0000, min -0.0000, max -0.0000, max |dev| = 0.0000
 PASS
